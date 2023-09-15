@@ -1,7 +1,18 @@
-import { FileVideo, Github, Upload, Wand2 } from 'lucide-react'
-import { Button, Label, SelectContainer, Separator, Slider, Textarea } from './components/ui'
+import { Github, Wand2 } from 'lucide-react'
+import { Button, Separator, Textarea } from './components/ui'
+import { VideoInputForm } from './components'
+import { Label } from '@radix-ui/react-label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select'
+import { Slider } from '@radix-ui/react-slider'
+import { PromptSelect } from './components/prompt-select'
+import { useState } from 'react'
 
 export const App = () => {
+  const [temperature, setTemperature] = useState(0.5)
+
+  const handlePromptSelected = (template: string) => {
+    console.log(template)
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <div className="px-6 py-3 flex items-center justify-between border-b">
@@ -36,57 +47,26 @@ export const App = () => {
           </p>
         </div>
         <aside className="w-80 space-y-6">
-          <form className="space-y-6">
-            <label htmlFor="video" className="border flex rounded-md aspect-video cursor-pointer border-dashed text-sm flex-col gap-2 items-center justify-center text-muted-foreground hover:bg-primary/5">
-              <FileVideo/>
-              Selecione um vídeo
-            </label>
-            <input type="file" accept="video/mp4" id="video" className="sr-only" />
-
-            <Separator/>
-
-            <div className="space-y-2">
-              <Label htmlFor="transcription_prompt">Prompt de transcrição</Label>
-              <Textarea 
-                id="transcription_prompt" 
-                className="h-20 leading-relaxed resize-none"
-                placeholder="Inclua palavras-chave mencionadas no vídeo separadas por vírgula (,)"
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Carregar vídeo
-              <Upload className="w-4 h-4 ml-2"/>
-            </Button>
-          </form>
-
+          <VideoInputForm />
           <Separator/>
-
           <form className="space-y-6">
             <div className="space-y-2">
               <Label>Prompt</Label>
-              <SelectContainer.Select>
-                <SelectContainer.SelectTrigger>
-                  <SelectContainer.SelectValue placeholder="Selecione um prompt..."/>
-                </SelectContainer.SelectTrigger>
-                <SelectContainer.SelectContent>
-                  <SelectContainer.SelectItem value="title">Título do vídeo</SelectContainer.SelectItem>
-                  <SelectContainer.SelectItem value="description">Descrição do vídeo</SelectContainer.SelectItem>
-                </SelectContainer.SelectContent>
-              </SelectContainer.Select>
+              <PromptSelect onPromptSelected={handlePromptSelected}/>
             </div>
             <div className="space-y-2">
               <Label>Modelo</Label>
-              <SelectContainer.Select  disabled defaultValue="gpt3.5">
-                <SelectContainer.SelectTrigger>
-                  <SelectContainer.SelectValue/>
-                </SelectContainer.SelectTrigger>
-                <SelectContainer.SelectContent>
-                  <SelectContainer.SelectItem value="gpt3.5">GPT 3.5-turbo 16k</SelectContainer.SelectItem>
-                </SelectContainer.SelectContent>
-              </SelectContainer.Select>
-              <span className="block text-xs text-muted-foreground italic">
-                Você poderá customizar essa opção em breve
-              </span>
+              <Select  disabled defaultValue="gpt3.5">
+                <SelectTrigger>
+                  <SelectValue/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gpt3.5">GPT 3.5-turbo 16k</SelectItem>
+                </SelectContent>
+              </Select>
+            <span className="block text-xs text-muted-foreground italic">
+            Você poderá customizar essa opção em breve
+            </span>
             </div>
 
             <div className="space-y-4">
@@ -94,10 +74,12 @@ export const App = () => {
               <Slider
                 min={0}
                 max={1}
+                value={[temperature]}
+                onValueChange={value => setTemperature(value[0])}
                 step={0.1}
-              />
+                />
               <span className="block text-xs text-muted-foreground italic leading-relaxed">
-                Valores mais altos tendem a deixar o resultado mais criativo e com possíveis erros
+              Valores mais altos tendem a deixar o resultado mais criativo e com possíveis erros
               </span>
             </div> 
 
