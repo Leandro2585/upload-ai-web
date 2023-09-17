@@ -13,7 +13,11 @@ const statusMessages = {
     success: 'Sucesso!'
 }
 
-export const VideoInputForm = () => {
+type VideoInputFormProps = {
+    onVideoUploaded: (id: string ) => void
+}
+
+export const VideoInputForm = (props: VideoInputFormProps) => {
     const [videoFile, setVideoFile] = useState<File | null>(null)
     const [status, setStatus] = useState<Status>('waiting')
     const promptInputRef = useRef<HTMLTextAreaElement>(null)
@@ -66,6 +70,7 @@ export const VideoInputForm = () => {
         setStatus('generating')
         await api.post(`/videos/${videoId}/transcription`, { prompt })
         setStatus('success')
+        props.onVideoUploaded(videoId)
     }
 
     const previewURL = useMemo(() => {
@@ -124,51 +129,3 @@ export const VideoInputForm = () => {
 
     )
 }
-
-{/* <form className="space-y-6">
-    <div className="space-y-2">
-        <Label>Prompt</Label>
-        <SelectContainer.Select>
-        <SelectContainer.SelectTrigger>
-            <SelectContainer.SelectValue placeholder="Selecione um prompt..."/>
-        </SelectContainer.SelectTrigger>
-        <SelectContainer.SelectContent>
-            <SelectContainer.SelectItem value="title">Título do vídeo</SelectContainer.SelectItem>
-            <SelectContainer.SelectItem value="description">Descrição do vídeo</SelectContainer.SelectItem>
-        </SelectContainer.SelectContent>
-        </SelectContainer.Select>
-    </div>
-    <div className="space-y-2">
-        <Label>Modelo</Label>
-        <SelectContainer.Select  disabled defaultValue="gpt3.5">
-        <SelectContainer.SelectTrigger>
-            <SelectContainer.SelectValue/>
-        </SelectContainer.SelectTrigger>
-        <SelectContainer.SelectContent>
-            <SelectContainer.SelectItem value="gpt3.5">GPT 3.5-turbo 16k</SelectContainer.SelectItem>
-        </SelectContainer.SelectContent>
-        </SelectContainer.Select>
-        <span className="block text-xs text-muted-foreground italic">
-        Você poderá customizar essa opção em breve
-        </span>
-    </div>
-
-    <div className="space-y-4">
-        <Label>Temperatura</Label>
-        <Slider
-        min={0}
-        max={1}
-        step={0.1}
-        />
-        <span className="block text-xs text-muted-foreground italic leading-relaxed">
-        Valores mais altos tendem a deixar o resultado mais criativo e com possíveis erros
-        </span>
-    </div> 
-
-    <Separator/>
-
-    <Button type="submit" className="w-full">
-        Executar
-        <Wand2 className="w-4 h-4 ml-2"/>
-    </Button>
-</form> */}
